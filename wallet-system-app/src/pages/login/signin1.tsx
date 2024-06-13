@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import React, { useState } from 'react';
 
 interface SharedClasses {
@@ -52,7 +51,6 @@ const SignInForm: React.FC = () => {
 
   return (
     <div className="w-full sm:w-1/2 p-10">
-      <h2 className="text-3xl font-bold text-center text-black-600 dark:text-blue-400 mb-6">Sign In</h2>
       <div className="flex justify-center mb-6">
         <img
           src="https://cdn.icon-icons.com/icons2/943/PNG/512/shoppaymentorderbuy-04_icon-icons.com_73886.png"
@@ -60,6 +58,7 @@ const SignInForm: React.FC = () => {
           className="h-12 w-12"
         />
       </div>
+      <h2 className="text-3xl font-bold text-center text-black-600 dark:text-blue-400 mb-6">Sign In</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-6">
           <input

@@ -25,13 +25,9 @@ const sharedClasses: SharedClasses = {
 
 const SignUp: React.FC = () => {
   const [formData, setFormData] = useState({
-    fullName: '',
-    gender: '',
-    contactNumber: '',
-    birthday: '',
-    address: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,38 +35,44 @@ const SignUp: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Add your sign-up logic here
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundImage: 'url("https://wallpaperaccess.com/full/1201180.jpg")', backgroundSize: 'cover' }}>
-      <div className="bg-white dark:bg-zinc-800 shadow-xl rounded-lg overflow-hidden flex flex-col sm:flex-row w-full max-w-lg">
-        <div className="w-full sm:w-1/2 bg-gradient-to-r from-blue-500 to-teal-400 text-white p-6 flex flex-col items-center justify-center" style={{ background: 'linear-gradient(to right, #09203F, #537895)' }}>
-          <h2 className="text-2xl font-bold mb-4">Welcome Back!</h2>
-          <p className="mb-4 text-center">Please login with your personal info</p>
-          <button className={sharedClasses.altButton}>Sign in</button>
-        </div>
-        <div className="w-full sm:w-1/2 p-6 bg-gray-100 dark:bg-zinc-900">
-          <h2 className="text-2xl font-bold text-center text-black-600 dark:text-blue-400 mb-4">Sign Up</h2>
-          <form>
-            <div className="flex justify-center mb-4">
-              <img
-                src="https://cdn.icon-icons.com/icons2/943/PNG/512/shoppaymentorderbuy-04_icon-icons.com_73886.png"
-                alt="Wallet Icon"
-                className="h-10 w-10"
-              />
+    <div className="min-h-screen flex items-center justify-center bg-cover" style={{ backgroundImage: 'url("https://wallpaperaccess.com/full/1201180.jpg")' }}>
+      <div className="bg-white dark:bg-zinc-800 shadow-xl rounded-lg overflow-hidden flex flex-col sm:flex-row w-full max-w-3xl">
+        <div className="w-full sm:w-1/2 p-10 flex flex-col justify-center">
+          <div className="flex justify-center mb-6">
+            <img
+              src="https://cdn.icon-icons.com/icons2/943/PNG/512/shoppaymentorderbuy-04_icon-icons.com_73886.png"
+              alt="Wallet Icon"
+              className="h-12 w-12"
+            />
+          </div>
+          <h2 className="text-3xl font-bold text-center text-black-600 dark:text-blue-400 mb-6">Sign Up</h2>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} />
             </div>
-            <input type="text" name="fullName" placeholder="Full Name" value={formData.fullName} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} />
-            <input type="text" name="gender" placeholder="Gender" value={formData.gender} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} />
-            <input type="text" name="contactNumber" placeholder="Contact Number" value={formData.contactNumber} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} />
-            <input type="date" name="birthday" placeholder="Birthday" value={formData.birthday} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} />
-            <input type="text" name="address" placeholder="Address" value={formData.address} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} />
-            <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} />
-            <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300} mb-2`} style={{ color: "black" }} />
-            <p className={`text-sm ${sharedClasses.text} ${sharedClasses.mb4} mb-5`}>At least 8 characters</p>
+            <div>
+              <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} />
+            </div>
+            <div>
+              <input type="password" name="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} />
+              <p className={`text-sm mt-2 ${sharedClasses.text}`}>At least 8 characters</p>
+            </div>
             <button type="submit" className={sharedClasses.submitButton}>Sign Up</button>
           </form>
+        </div>
+        <div className="w-full sm:w-1/2 bg-gradient-to-r from-blue-500 to-teal-400 text-white p-10 flex flex-col items-center justify-center" style={{ background: 'linear-gradient(to right, #537895, #09203F)' }}>
+          <h2 className="text-3xl font-bold mb-6">Hello, Friend!</h2>
+          <p className="mb-6 text-center">Enter your personal details and start your journey with us</p>
+          <button className={sharedClasses.altButton}>Sign up</button>
         </div>
       </div>
     </div>
   );
 };
-
 export default SignUp;
