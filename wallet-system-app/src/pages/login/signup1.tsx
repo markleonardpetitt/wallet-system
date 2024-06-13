@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 
 interface SharedClasses {
   button: string;
@@ -30,14 +31,36 @@ const SignUp: React.FC = () => {
     confirmPassword: ''
   });
 
+  const router = useRouter();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Add your sign-up logic here
+    try {
+      const response = await fetch('/api/login/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert('Signed up successfully!');
+        router.push('/login/signin1');  // Redirect to sign-in page after successful sign-up
+      } else {
+        alert(result.error);
+      }
+    } catch (error) {
+      console.error('Error signing up', error);
+    }
+  };
+
+  const handleSignInClick = () => {
+    router.push('/login/signin1');
   };
 
   return (
@@ -54,25 +77,26 @@ const SignUp: React.FC = () => {
           <h2 className="text-3xl font-bold text-center text-black-600 dark:text-blue-400 mb-6">Sign Up</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} />
+              <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} required />
             </div>
             <div>
-              <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} />
+              <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} required />
             </div>
             <div>
-              <input type="password" name="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} />
+              <input type="password" name="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} style={{ color: "black" }} required />
               <p className={`text-sm mt-2 ${sharedClasses.text}`}>At least 8 characters</p>
             </div>
             <button type="submit" className={sharedClasses.submitButton}>Sign Up</button>
           </form>
         </div>
         <div className="w-full sm:w-1/2 bg-gradient-to-r from-blue-500 to-teal-400 text-white p-10 flex flex-col items-center justify-center" style={{ background: 'linear-gradient(to right, #537895, #09203F)' }}>
-          <h2 className="text-3xl font-bold mb-6">Hello, Friend!</h2>
-          <p className="mb-6 text-center">Enter your personal details and start your journey with us</p>
-          <button className={sharedClasses.altButton}>Sign up</button>
+          <h2 className="text-3xl font-bold mb-6">Welcome Back!</h2>
+          <p className="mb-6 text-center">To keep connected with us please login with your personal info</p>
+          <button onClick={handleSignInClick} className={sharedClasses.altButton}>Sign in</button>
         </div>
       </div>
     </div>
   );
 };
+
 export default SignUp;

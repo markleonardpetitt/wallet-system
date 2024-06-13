@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 
 interface SharedClasses {
   button: string;
@@ -45,8 +46,24 @@ const SignInForm: React.FC = () => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    try {
+      const response = await fetch('/api/login/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert('Signed in successfully!');
+      } else {
+        alert(result.error);
+      }
+    } catch (error) {
+      console.error('Error signing in', error);
+    }
   };
 
   return (
@@ -91,11 +108,17 @@ const SignInForm: React.FC = () => {
 };
 
 const SignUpPrompt: React.FC = () => {
+  const router = useRouter();
+
+  const handleSignUpClick = () => {
+    router.push('/login/signup1');
+  };
+
   return (
     <div className="w-full sm:w-1/2 bg-gradient-to-r from-blue-500 to-teal-400 text-white p-10 flex flex-col items-center justify-center" style={{ background: 'linear-gradient(to right, #537895, #09203F)' }}>
       <h2 className="text-3xl font-bold mb-6">Hello, Friend!</h2>
       <p className="mb-6 text-center">Enter your personal details and start your journey with us</p>
-      <button className={sharedClasses.altButton}>Sign up</button>
+      <button onClick={handleSignUpClick} className={sharedClasses.altButton}>Sign up</button>
     </div>
   );
 };
