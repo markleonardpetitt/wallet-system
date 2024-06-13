@@ -58,14 +58,14 @@ const SignIn: React.FC = () => {
                             <input
                                 type="email"
                                 placeholder="Email"
-                                className={`${sharedClasses.input} border-zinc-300 dark:border-zinc-700`}
+                                className={`${sharedClasses.input} border-zinc-300 dark:border-zinc-700 text-black`}
                             />
                         </div>
                         <div className="mb-6">
                             <input
                                 type="password"
                                 placeholder="Password"
-                                className={`${sharedClasses.input} border-zinc-300 dark:border-zinc-700`}
+                                className={`${sharedClasses.input} border-zinc-300 dark:border-zinc-700 text-black`}
                             />
                             <p className={`text-sm ${sharedClasses.text} mt-2`}>At least 8 characters</p>
                         </div>

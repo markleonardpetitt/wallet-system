@@ -61,17 +61,17 @@ const SignUp: React.FC = () => {
                     <input
                         type="text"
                         placeholder="Name"
-                        className={`${sharedClasses.input} ${sharedClasses.borderZinc300} mb-6`}
+                        className={`${sharedClasses.input} ${sharedClasses.borderZinc300} mb-6 text-black`}
                     />
                     <input
                         type="email"
                         placeholder="Email"
-                        className={`${sharedClasses.input} ${sharedClasses.borderZinc300} mb-6`}
+                        className={`${sharedClasses.input} ${sharedClasses.borderZinc300} mb-6 text-black`}
                     />
                     <input
                         type="password"
                         placeholder="Password"
-                        className={`${sharedClasses.input} ${sharedClasses.borderZinc300} mb-2`}
+                        className={`${sharedClasses.input} ${sharedClasses.borderZinc300} mb-2 text-black`}
                     />
                     <p className={`text-sm ${sharedClasses.text} ${sharedClasses.mb4} mb-6`}>
                         At least 8 characters
