@@ -49,15 +49,6 @@ const Wallet = () => {
             <i className="fas fa-hand-holding-usd"></i> Wallet Withdrawal Request
           </button>
         </div>
-
-        { }
-        <div className="px-8 py-4">
-          <label htmlFor="amount" className="block text-left text-gray-700 mb-1">Enter Amount (₱):</label>
-          <input type="text" id="amount" name="amount" className="border rounded w-full py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <button className="mt-3 w-full md:w-auto" style={{ backgroundColor: 'rgb(29, 56, 86)', color: 'white', padding: '8px', borderRadius: '5px' }}>
-            Proceed
-          </button>
-        </div>
       </div>
     </div>
   );
