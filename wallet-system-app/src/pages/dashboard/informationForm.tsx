@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import QRCode from 'qrcode';
 
 interface SharedClasses {
   button: string;
@@ -23,58 +25,124 @@ const sharedClasses: SharedClasses = {
 };
 
 const InformationForm: React.FC = () => {
-  const [validated, setValidated] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [address, setAddress] = useState('');
+  const [zipCode, setZipCode] = useState('');
+  const [contactNumber, setContactNumber] = useState('');
+  const [gender, setGender] = useState('');
+  const [birthday, setBirthday] = useState('');
+  const [age, setAge] = useState<number | undefined>();
+  const router = useRouter();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/user/updateProfile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          address,
+          zipCode,
+          contactNumber,
+          gender,
+          birthday,
+          age,
+        }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        const qrCode = await QRCode.toDataURL(result.user.id.toString());
+        await fetch('/api/user/updateQrCode', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: result.user.id, qrCode }),
+        });
+        router.push('/dashboard');
+      } else {
+        alert(result.error);
+      }
+    } catch (error) {
+      console.error('Error updating profile', error);
     }
-    setValidated(true);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cover" style={{ backgroundImage: 'url("https://wallpaperaccess.com/full/1201180.jpg")' }}>
-      <div className="bg-white dark:bg-zinc-800 shadow-xl rounded-lg overflow-hidden flex flex-col sm:flex-row w-full max-w-3xl">
-        <div className="w-full p-10 flex flex-col justify-center">
-          <h2 className="text-3xl font-bold text-center text-black-600 dark:text-blue-400 mb-6">Finish Signup</h2>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <input type="text" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="validationCustom01" placeholder="First name" required style={{ color: "black" }} />
-              </div>
-              <div>
-                <input type="text" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="validationCustom02" placeholder="Last name" required style={{ color: "black" }} />
-              </div>
-              <div>
-                <input type="text" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="inputaddress" placeholder="Address" required style={{ color: "black" }} />
-              </div>
-              <div>
-                <input type="number" pattern="[0-9]{5}" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="inputZipCode" placeholder="Zip Code" required style={{ color: "black" }} />
-              </div>
-              <div>
-                <input type="tel" pattern="[0-9]{4}-[0-9]{3}-[0-9]{4}" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="inputContactNumber" placeholder="Contact Number" required style={{ color: "black" }} />
-              </div>
-              <div>
-                <select className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="select-menu" required style={{ color: "black" }}>
-                  <option value="">Select Gender</option>
-                  <option value="1">Male</option>
-                  <option value="2">Female</option>
-                </select>
-              </div>
-              <div>
-                <input type="date" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="birthday" placeholder="Birthday" required style={{ color: "black" }} />
-              </div>
-              <div>
-                <input type="number" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="age" placeholder="Age" required style={{ color: "black" }} />
-              </div>
-            </div>
-            <div className="mt-4 text-center">
-              <button className={sharedClasses.submitButton} type="submit">Confirm</button>
-            </div>
-          </form>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <h2 className="text-2xl mb-6 text-center">Complete Your Profile</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Zip Code"
+              value={zipCode}
+              onChange={(e) => setZipCode(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Contact Number"
+              value={contactNumber}
+              onChange={(e) => setContactNumber(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Gender"
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+              required
+            />
+            <input
+              type="date"
+              placeholder="Birthday"
+              value={birthday}
+              onChange={(e) => setBirthday(e.target.value)}
+              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+              required
+            />
+            <input
+              type="number"
+              placeholder="Age"
+              value={age}
+              onChange={(e) => setAge(Number(e.target.value))}
+              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+              required
+            />
+          </div>
+          <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-500">Finish</button>
+        </form>
       </div>
     </div>
   );
