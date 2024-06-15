@@ -16,11 +16,14 @@ export default async function handleSignIn(req: NextApiRequest, res: NextApiResp
       where: { email }
     });
 
-    if (user && user.password === password) {
-      // Normally, you'd use a library for password hashing and comparing, like bcrypt
-      return res.status(200).json({ message: 'Signed in successfully!' });
-    } else {
+    if (!user || user.password !== password) {
       return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    if (!user.firstName || !user.lastName || !user.address || !user.zipCode || !user.contactNumber || !user.gender || !user.birthday || !user.age) {
+      return res.status(200).json({ message: 'Signed in successfully!', isNewUser: true });
+    } else {
+      return res.status(200).json({ message: 'Signed in successfully!', isNewUser: false });
     }
   } catch (error) {
     console.error(error);

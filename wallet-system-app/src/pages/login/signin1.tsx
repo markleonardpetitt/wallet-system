@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import { PrismaClient } from '@prisma/client';
 
 interface SharedClasses {
   button: string;
@@ -24,19 +25,9 @@ const sharedClasses: SharedClasses = {
 };
 
 const SignIn: React.FC = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-cover" style={{ backgroundImage: 'url("https://wallpaperaccess.com/full/1201180.jpg")' }}>
-      <div className="bg-white dark:bg-zinc-800 shadow-xl rounded-lg overflow-hidden flex flex-col sm:flex-row w-full max-w-3xl">
-        <SignInForm />
-        <SignUpPrompt />
-      </div>
-    </div>
-  );
-};
-
-const SignInForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -57,7 +48,11 @@ const SignInForm: React.FC = () => {
 
       const result = await response.json();
       if (response.ok) {
-        alert('Signed in successfully!');
+        if (result.profileComplete) {
+          router.push('/dashboard');
+        } else {
+          router.push('/informationForm');
+        }
       } else {
         alert(result.error);
       }
@@ -67,45 +62,68 @@ const SignInForm: React.FC = () => {
   };
 
   return (
-    <div className="w-full sm:w-1/2 p-10">
-      <div className="flex justify-center mb-6">
-        <img
-          src="https://cdn.icon-icons.com/icons2/943/PNG/512/shoppaymentorderbuy-04_icon-icons.com_73886.png"
-          alt="Wallet Icon"
-          className="h-12 w-12"
+    <div className="min-h-screen flex items-center justify-center bg-cover" style={{ backgroundImage: 'url("https://wallpaperaccess.com/full/1201180.jpg")' }}>
+      <div className="bg-white dark:bg-zinc-800 shadow-xl rounded-lg overflow-hidden flex flex-col sm:flex-row w-full max-w-3xl">
+        <SignInForm
+          email={email}
+          password={password}
+          handleEmailChange={handleEmailChange}
+          handlePasswordChange={handlePasswordChange}
+          handleSubmit={handleSubmit}
         />
+        <SignUpPrompt />
       </div>
-      <h2 className="text-3xl font-bold text-center text-black-600 dark:text-blue-400 mb-6">Sign In</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-6">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={handleEmailChange}
-            className={`${sharedClasses.input} border-zinc-300 dark:border-zinc-700 ${email && 'text-black'}`}
-            required
-          />
-        </div>
-        <div className="mb-6">
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={handlePasswordChange}
-            className={`${sharedClasses.input} border-zinc-300 dark:border-zinc-700 ${password && 'text-black'}`}
-            required
-          />
-          <p className={`text-sm mt-2 ${sharedClasses.text}`}>At least 8 characters</p>
-        </div>
-        <div className="mb-6 text-right">
-          <a href="#" className={sharedClasses.link}>Forgot your password?</a>
-        </div>
-        <button type="submit" className={sharedClasses.submitButton}>Sign in</button>
-      </form>
     </div>
   );
 };
+
+interface SignInFormProps {
+  email: string;
+  password: string;
+  handleEmailChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+}
+
+const SignInForm: React.FC<SignInFormProps> = ({ email, password, handleEmailChange, handlePasswordChange, handleSubmit }) => (
+  <div className="w-full sm:w-1/2 p-10">
+    <div className="flex justify-center mb-6">
+      <img
+        src="https://cdn.icon-icons.com/icons2/943/PNG/512/shoppaymentorderbuy-04_icon-icons.com_73886.png"
+        alt="Wallet Icon"
+        className="h-12 w-12"
+      />
+    </div>
+    <h2 className="text-3xl font-bold text-center text-black-600 dark:text-blue-400 mb-6">Sign In</h2>
+    <form onSubmit={handleSubmit}>
+      <div className="mb-6">
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={handleEmailChange}
+          className={`${sharedClasses.input} border-zinc-300 dark:border-zinc-700 ${email && 'text-black'}`}
+          required
+        />
+      </div>
+      <div className="mb-6">
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={handlePasswordChange}
+          className={`${sharedClasses.input} border-zinc-300 dark:border-zinc-700 ${password && 'text-black'}`}
+          required
+        />
+        <p className={`text-sm mt-2 ${sharedClasses.text}`}>At least 8 characters</p>
+      </div>
+      <div className="mb-6 text-right">
+        <a href="#" className={sharedClasses.link}>Forgot your password?</a>
+      </div>
+      <button type="submit" className={sharedClasses.submitButton}>Sign in</button>
+    </form>
+  </div>
+);
 
 const SignUpPrompt: React.FC = () => {
   const router = useRouter();
