@@ -1,6 +1,7 @@
 // pages/api/login/signup.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -17,18 +18,19 @@ export default async function handleSignUp(req: NextApiRequest, res: NextApiResp
 
   try {
     const existingUser = await prisma.user.findUnique({
-      where: { email }
+      where: { email },
     });
 
     if (existingUser) {
       return res.status(400).json({ error: 'Email already in use' });
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await prisma.user.create({
       data: {
         email,
-        password, // Normally, you'd use a library for hashing passwords, like bcrypt
-      }
+        password: hashedPassword,
+      },
     });
 
     return res.status(201).json({ message: 'User registered successfully!', user: newUser });

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 
 interface SharedClasses {
   button: string;
@@ -23,15 +24,43 @@ const sharedClasses: SharedClasses = {
 };
 
 const InformationForm: React.FC = () => {
-  const [validated, setValidated] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    address: '',
+    zipCode: '',
+    contactNumber: '',
+    gender: '',
+    birthday: '',
+    age: '',
+  });
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
+  const router = useRouter();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/login/completeProfile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        alert('Profile completed successfully!');
+        router.push('/dashboard');  // Redirect to dashboard after completing profile
+      } else {
+        const result = await response.json();
+        alert(result.error);
+      }
+    } catch (error) {
+      console.error('Error completing profile', error);
     }
-    setValidated(true);
   };
 
   return (
@@ -42,32 +71,32 @@ const InformationForm: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <input type="text" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="validationCustom01" placeholder="First name" required style={{ color: "black" }} />
+                <input type="text" name="firstName" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} placeholder="First name" value={formData.firstName} onChange={handleChange} required style={{ color: "black" }} />
               </div>
               <div>
-                <input type="text" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="validationCustom02" placeholder="Last name" required style={{ color: "black" }} />
+                <input type="text" name="lastName" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} placeholder="Last name" value={formData.lastName} onChange={handleChange} required style={{ color: "black" }} />
               </div>
               <div>
-                <input type="text" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="inputaddress" placeholder="Address" required style={{ color: "black" }} />
+                <input type="text" name="address" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} placeholder="Address" value={formData.address} onChange={handleChange} required style={{ color: "black" }} />
               </div>
               <div>
-                <input type="number" pattern="[0-9]{5}" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="inputZipCode" placeholder="Zip Code" required style={{ color: "black" }} />
+                <input type="number" name="zipCode" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} placeholder="Zip Code" value={formData.zipCode} onChange={handleChange} required style={{ color: "black" }} />
               </div>
               <div>
-                <input type="tel" pattern="[0-9]{4}-[0-9]{3}-[0-9]{4}" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="inputContactNumber" placeholder="Contact Number" required style={{ color: "black" }} />
+                <input type="tel" name="contactNumber" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} placeholder="Contact Number" value={formData.contactNumber} onChange={handleChange} required style={{ color: "black" }} />
               </div>
               <div>
-                <select className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="select-menu" required style={{ color: "black" }}>
+                <select name="gender" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} value={formData.gender} onChange={handleChange} required style={{ color: "black" }}>
                   <option value="">Select Gender</option>
-                  <option value="1">Male</option>
-                  <option value="2">Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
                 </select>
               </div>
               <div>
-                <input type="date" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="birthday" placeholder="Birthday" required style={{ color: "black" }} />
+                <input type="date" name="birthday" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} value={formData.birthday} onChange={handleChange} required style={{ color: "black" }} />
               </div>
               <div>
-                <input type="number" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} id="age" placeholder="Age" required style={{ color: "black" }} />
+                <input type="number" name="age" className={`${sharedClasses.input} ${sharedClasses.borderZinc300}`} placeholder="Age" value={formData.age} onChange={handleChange} required style={{ color: "black" }} />
               </div>
             </div>
             <div className="mt-4 text-center">
